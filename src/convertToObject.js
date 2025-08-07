@@ -7,11 +7,22 @@
  */
 
 function convertToObject(sourceString) {
-  return Object.fromEntries(
-    sourceString
-      .split(';')
-      .map((declaration) => declaration.split(':').map((str) => str.trim()))
-      .filter(([key, value]) => key && value),
-  );
+  return sourceString
+    .split(';')
+    .map((declaration) => declaration.trim())
+    .filter((declaration) => declaration.length > 0)
+    .map((declaration) => {
+      const colonIndex = declaration.indexOf(':');
+      const property = declaration.slice(0, colonIndex).trim();
+      const value = declaration.slice(colonIndex + 1).trim();
+
+      return [property, value];
+    })
+    .reduce((acc, [property, value]) => {
+      acc[property] = value;
+
+      return acc;
+    }, {});
 }
+
 module.exports = convertToObject;
